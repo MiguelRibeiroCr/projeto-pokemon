@@ -8,70 +8,31 @@ import PokemonLocationEntity from "../../pokemon-list/model/pokemon-location-ent
 import PokemonTypeEntity from "../../pokemon-list/model/pokemon-type-entity";
 import { Container, PokemonStyle } from "./style";
 
-export default function PokemonComponent(props:any){
-    const [pokemon, setPokemon] = useState<PokemonEntity>()
+interface Props{
+    pokemon: PokemonEntity
+}
 
-    async function getPokemonLocations(locationUrl: string): Promise<PokemonLocationEntity[]>{
+export default class PokemonComponent extends React.Component<Props>{
 
-        const locations: PokemonLocationEntity[] = [];
+    render(){
 
-        const response = await fetch(locationUrl);
-        const data = await response.json();        
+        const{pokemon} = this.props;
 
-        data.slice(0,2).map(location => {
-            locations.push(new PokemonLocationEntity(location.location_area.name));
-        });
-        
-        return locations;
-    }
-
-    function getPokemonByPromise(promissedPokemon: Promise<any>){
-        promissedPokemon.then(response => response.json())
-        .then(async data => {
-
-            if(data.id !== undefined){
-                
-                var pokemonTypes: PokemonTypeEntity[] = [];
-                data.types.slice(0,2).map(pokemonType => {
-                    console.log(pokemonType);
-                    pokemonTypes.push(new PokemonTypeEntity(pokemonType.type.name))
-                });
-                
-                var pokemonAbilities: PokemonAbilityEntity[] = [];
-                data.abilities.slice(0,2).map(pokemonAbility => {pokemonAbilities.push(new PokemonAbilityEntity(pokemonAbility.ability.name))});
-
-                const pokemonLocations = await getPokemonLocations(data.location_area_encounters);
-
-                const pokemonEntity = new PokemonEntity(
-                    data.id, 
-                    data.name, 
-                    pokemonTypes, 
-                    pokemonLocations, 
-                    pokemonAbilities, 
-                    data.base_experience,
-                    ''
-                    );                
-                setPokemon(pokemonEntity)                
-            }
-        })
-    }
-
-    useEffect(() => getPokemonByPromise(props.promissed_pokemon), [])
-
-    if(pokemon !== undefined){
-        return (
-            <Container>
-                <PokemonStyle color={getPokemonColorByType(pokemon.types[0].name)}>
-                    <Link to={{pathname:'/pokemon-details/', search: `?pokemon=${JSON.stringify(pokemon)}`}}>
-                        <img src={`${pokemon.imageUrl}`} alt={pokemon.name}/>
-                    </Link>
-                    <span>{pokemon.name.toUpperCase()}</span>
-                </PokemonStyle>
-            </Container>
-        )
-    }else{
-        return(
-            <div></div>
-        )
-    }    
+        if(pokemon !== undefined){
+            return (
+                <Container>
+                    <PokemonStyle color={getPokemonColorByType(pokemon.types[0].name)}>
+                        <Link to={{pathname:'/pokemon-details/', search: `?pokemon=${JSON.stringify(pokemon)}`}}>
+                            <img src={`${pokemon.imageUrl}`} alt={pokemon.name}/>
+                        </Link>
+                        <span>{pokemon.name.toUpperCase()}</span>
+                    </PokemonStyle>
+                </Container>
+            )
+        }else{
+            return(
+                <div></div>
+            )
+        } 
+    }   
 }

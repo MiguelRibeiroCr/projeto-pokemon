@@ -20,7 +20,8 @@ const colours = [
 ];
 
 export function getPokemonColorByType(type: string): string{
-    var colorByType = '';
+	var colorByType = '';
+	console.log('Color', type);
     colours.map(color => {
         if(color.type == type) {
             colorByType = color.color;
