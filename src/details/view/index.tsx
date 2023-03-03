@@ -1,22 +1,25 @@
 
-import PokemonEntity from "../pokemon-list/model/pokemon-entity";
+import PokemonEntity from "../../pokemon-list/model/pokemon-entity";
 import { useState, useEffect } from "react";
 import React from "react";
 import { Container, PokemonStyle, HpText, Details, LeftAlign, CenterAlign, RightAlign } from "./style";
-import { getPokemonColorByType } from "../utils/pokemon-colors-util";
-import { pokemonLocal } from "../utils/consts";
+import { getPokemonColorByType } from "../../utils/pokemon-colors-util";
+import { pokemonLocal } from "../../utils/consts";
 import { useParams, useSearchParams } from "react-router-dom";
 
-export default function PokemonDetails(){
+interface Props{
+    pokemon: PokemonEntity;
+}
 
-    const [pokemon, setPokemon]= useState<PokemonEntity>(pokemonLocal as PokemonEntity)
-    const [searchParams] = useSearchParams();
+export default class PokemonDetailsView extends React.Component<Props>{
 
-    useEffect(()=>{
-        var data = JSON.parse(searchParams.get('pokemon'));
-        setPokemon(data as PokemonEntity)
-    }, [])
-    
+
+    render(){
+
+        const {pokemon} = this.props;
+
+        if(pokemon != undefined){
+
     return(
             <Container color={getPokemonColorByType(pokemon.types[0].name)}>
                     <PokemonStyle>
@@ -52,6 +55,8 @@ export default function PokemonDetails(){
                                         return(
                                             <p><span>{type.name}</span></p>
                                         )
+
+                                    
                                     })
                                 }
                             </RightAlign>
@@ -59,4 +64,9 @@ export default function PokemonDetails(){
                     </PokemonStyle>
                 </Container>
     )
+
+    }else{
+        return<div></div>
+    }
+    }
 }
